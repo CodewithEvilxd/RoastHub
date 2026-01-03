@@ -1,0 +1,160 @@
+"use client";
+
+import { body, display } from "@/lib/fonts";
+import { cn } from "@/lib/utils";
+import { FaTimes } from "react-icons/fa";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { useAuthModal } from "./auth-modal-provider";
+
+export function WelcomeModal() {
+  const { data: session } = useSession();
+  const { showSignInModal } = useAuthModal();
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    // Show welcome modal for non-authenticated users on first visit
+    if (!session) {
+      const hasSeenWelcome = localStorage.getItem("hasSeenWelcome");
+      if (!hasSeenWelcome) {
+        setIsOpen(true);
+        localStorage.setItem("hasSeenWelcome", "true");
+      }
+    }
+  }, [session]);
+
+  const handleSignInClick = () => {
+    setIsOpen(false);
+    showSignInModal();
+  };
+
+  if (!isOpen || session) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#97D4D5] comic-border-4 comic-shadow-8 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b-2 border-[#2c2c2c]/20">
+          <h1
+            className={cn(
+              display.className,
+              "text-4xl tracking-wide text-[#F2D5A3]"
+            )}
+            style={{
+              textShadow: [
+                "4px 4px 0 #2a7e84",
+                "3px 3px 0 #2a7e84",
+                "2px 2px 0 #2a7e84",
+                "-1px -1px 0 #2c2c2c",
+                "1px -1px 0 #2c2c2c",
+                "-1px 1px 0 #2c2c2c",
+                "1px 1px 0 #2c2c2c",
+              ].join(", "),
+            }}
+          >
+            ROASTHUB
+          </h1>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-2 rounded-full comic-border-2 bg-green-400 hover:bg-green-500 text-[#2c2c2c] comic-shadow-2 comic-lift"
+            aria-label="Close modal"
+          >
+            <FaTimes className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          <div className="text-center mb-6">
+            <p
+              className={cn(
+                display.className,
+                "text-2xl tracking-wider text-[#F2D5A3] mb-4"
+              )}
+              style={{
+                textShadow: [
+                  "3px 3px 0 #2a7e84",
+                  "2px 2px 0 #2a7e84",
+                  "-1px -1px 0 #2c2c2c",
+                  "1px -1px 0 #2c2c2c",
+                  "-1px 1px 0 #2c2c2c",
+                  "1px 1px 0 #2c2c2c",
+                ].join(", "),
+              }}
+            >
+              WELCOME TO THE ROAST!
+            </p>
+            <p className={cn(body.className, "text-lg text-[#2c2c2c] mb-6")}>
+              Get your resume roasted (constructively!) by our amazing
+              community. Ready to level up your career game?
+            </p>
+          </div>
+
+          {/* Info cards */}
+          <div className="grid gap-4 mb-6">
+            <div className="comic-border bg-[#F2D5A3] comic-shadow-3 rounded-lg p-4">
+              <h3
+                className={cn(
+                  display.className,
+                  "font-bold text-[#2c2c2c] mb-2"
+                )}
+              >
+                What is RoastHub?
+              </h3>
+              <p className={cn(body.className, "text-sm text-[#2c2c2c]/80")}>
+                A playful platform where you can get constructive feedback on
+                your resume in a fun, comic-book style environment.
+              </p>
+            </div>
+
+            <div className="comic-border bg-[#F8E4C6] comic-shadow-3 rounded-lg p-4">
+              <h3
+                className={cn(
+                  display.className,
+                  "font-bold text-[#2c2c2c] mb-2"
+                )}
+              >
+                How it works
+              </h3>
+              <p className={cn(body.className, "text-sm text-[#2c2c2c]/80")}>
+                Upload your resume, get roasted (constructively!), and help
+                others by giving feedback on their resumes too.
+              </p>
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="space-y-3">
+            <button
+              onClick={handleSignInClick}
+              className={cn(
+                display.className,
+                "w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 comic-border comic-shadow-3 comic-lift text-lg rounded-full"
+              )}
+            >
+              Get Started - Sign In
+            </button>
+
+            <button
+              onClick={() => setIsOpen(false)}
+              className={cn(
+                display.className,
+                "w-full bg-[#EBDDBF] hover:bg-[#EBDDBF]/80 text-[#2c2c2c] font-bold py-2 px-4 comic-border-2 comic-shadow-2 comic-lift rounded-full"
+              )}
+            >
+              Browse Resumes First
+            </button>
+          </div>
+
+          {/* Footer note */}
+          <div className="text-center mt-4">
+            <p className={cn(display.className, "text-xs text-[#2c2c2c]/60")}>
+              By signing in, you agree to keep feedback constructive and fun.
+              Let&apos;s build each other up! 🚀
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
