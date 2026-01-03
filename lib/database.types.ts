@@ -19,7 +19,7 @@ export interface Database {
           updated_at: string;
         };
         Insert: {
-          id: string;
+          id?: string;
           email: string;
           name?: string | null;
           avatar_url?: string | null;

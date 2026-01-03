@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create profiles table
 CREATE TABLE IF NOT EXISTS public.profiles (
-    id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+    id UUID PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
     name TEXT,
     avatar_url TEXT,
@@ -235,3 +235,11 @@ CREATE TRIGGER update_resumes_updated_at BEFORE UPDATE ON public.resumes
 
 CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON public.comments
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Create function for UUID v5 generation
+CREATE OR REPLACE FUNCTION generate_uuid_v5(namespace UUID, name TEXT)
+RETURNS UUID AS $$
+BEGIN
+  RETURN uuid_generate_v5(namespace, name);
+END;
+$$ LANGUAGE plpgsql;
